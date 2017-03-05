@@ -1,0 +1,93 @@
+<html>
+<title>Sean Yu (sy334) Project1-Sample</title>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v2.min.js"></script>
+<style>
+svg { border: solid #ccc 1px; }
+path.country { fill: #ccc; stroke: #888;; }
+</style>
+
+</style>
+<body>
+<svg height = "1000" width="1000">
+
+<script>
+
+var svg = d3.select("svg");
+
+var projection = d3.geoAlbersUsa().scale(75);
+var pathGenerator = d3.geoPath().projection(projection);
+
+var divergingColors = ["#d8b365", "#f5f5f5", "#5ab4ac"];
+var sequentialColors = ['#edf8fb','#b2e2e2','#66c2a4','#2ca25f','#006d2c'];
+
+var populationScale = d3.scaleLinear().domain([-5, 0, 5]).range(divergingColors);
+var percentScale = d3.scaleLinear()
+.domain([0,20,40,60,100]).range(sequentialColors);
+
+var counties, states;
+var usdaAtlas;
+
+// function to handle any row-by-row processing on CSV
+var parseRow = function(row) {
+	row.FIPS = Number(row.FIPS);
+	return row;
+}
+
+var apcs;
+d3.csv("apcs.csv",function(data){apcs=data});
+
+
+d3.queue()
+.defer(d3.json, "us.json")
+.defer(d3.csv, "apcs.csv", parseRow)
+.await(function (error, rawMap, rawAtlas) {
+
+	console.log("Code in the call-back function is only executed when every data file loads.");
+
+	counties = topojson.feature(rawMap, rawMap.objects.counties);
+	states = topojson.feature(rawMap, rawMap.objects.states);
+
+	usdaAtlas = d3.map(rawAtlas, function (d) {
+		return d.FIPS;
+	});
+
+	showMap(percentScale, "%female");
+});
+
+function showMap(scale, variable) {
+	// Create or modify paths for each country
+
+	projection.fitExtent([[0,0], [svg.attr("width"), svg.attr("height")]], states);
+	pathGenerator = d3.geoPath().projection(projection);
+
+	var paths = svg.selectAll("path.country").data(states.features);
+	paths.enter().append("path").attr("class", "country")
+	.merge(paths)
+	.style("fill", function (state) {
+		var stateData = usdaAtlas.get(state.id);
+		if (stateData) {
+			return scale(stateData[variable]);
+		}
+
+	})
+	.attr("d", function (state) {
+		return pathGenerator(state);
+	});
+
+}
+
+</script>
+
+
+
+</svg>
+
+
+</body>
+
+
+
+
+
+</html>
