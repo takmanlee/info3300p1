@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title> Cynthia Zhu (cz238) </title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+        #sliders {
+            width: 500px;
+            margin: 0 auto;
+        }
+
+        svg {
+            border: solid #ccc 1px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        rect {
+            stroke: black;
+            fill: steelblue;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Problem 1</h1>
+    <p id="p1"></p>
+
+    <script>
+        function plotHistogram(id, arrayOfNumbers) {
+            // used https://bl.ocks.org/mbostock/3048450 and https://bl.ocks.org/d3noob/96b74d0bd6d11427dd797892551a103c as reference
+            // append SVG to element
+            var height = 300;
+            var width = 500;
+            var padding = 50;
+            var svg = d3.select("#" + id).append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+
+            // construct linear scales
+            // x is range of values inside arrayOfNumbers
+            var xScale = d3.scaleLinear().domain([d3.min(arrayOfNumbers), d3.max(arrayOfNumbers)]).rangeRound([padding, width - padding]);
+            // make bins using histogram generator with up to 20 intervals
+            // using threshold intervals
+            var bins = d3.histogram().domain(xScale.domain()).thresholds(20)(arrayOfNumbers);
+
+            // y is frequencies of bins, intervals of values, of arrayOfNumbers
+            var yScale = d3.scaleLinear().domain([0, d3.max(bins, function(d) { //find the maximum length (highest frequency) of the bins
+                return d.length / arrayOfNumbers.length; // so we get the density function value, from 0 to 1
+            })]).range([height - padding, padding]);
+
+            // append bar rectangles to svg
+            svg.selectAll("rect").data(bins).enter().append("rect")
+                .attr("transform", function(d) {
+                    return "translate(" + xScale(d.x0) + "," + yScale(d.length / arrayOfNumbers.length) + ")"; // move rect according to bin's lower bound and its frequency
+                }) // move bars
+                //xScale(bins[1].x1) - xScale(bins[1].x0)
+                .attr("width", function(d) {
+                    return xScale(d.x1) - xScale(d.x0);
+                })
+                .attr("height", function(d) {
+                    return height - padding - yScale(d.length / arrayOfNumbers.length);
+                });
+
+            // add axes
+            svg.append("g").attr("transform", "translate(0," + String(height - padding) + ")").call(d3.axisBottom(xScale));
+            svg.append("g").attr("transform", "translate(" + String(padding) + ",0)").call(d3.axisLeft(yScale).tickSize(10));
+
+            // add axes labels
+            xLabel = svg.append("text").attr("x", width / 2).attr("y", height - padding / 3).style("text-anchor", "middle").text("x");
+            yLabel = svg.append("text").attr("transform", "rotate(-90)").attr("x", -(height / 2)).attr("y", padding / 4).style("text-anchor", "middle").style("font-size", "10px").text("probability density, p(x)");
+
+
+        }
+    </script>
+
+    <h1>Problem 2</h1>
+    <p id="p2"></p>
+    <script>
+        function gaussian() {
+            return d3.randomNormal()(); // default is mu of 0 & sigma 1
+            // d3.randomNormal() returns a function
+        }
+
+        function gaussian1000() {
+
+            var array1000 = [];
+            for (var i = 0; i < 1000; i++) {
+                array1000.push(gaussian());
+            }
+            return array1000;
+        }
+        plotHistogram("p2", gaussian1000());
+        // add graph title
+        d3.select("#p2 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Gaussian Samples");
+    </script>
+
+    <h1>Problem 3</h1>
+    <p id="p3">The new graph has roughly the same shape as the one from problem 2 (its underlying distribution and the density of the normal). However, the x-scale is much smaller, ranging from around -0.6 to 0.12 than the one from problem 2, showing that the range
+        of values has diminished. This makes sense as it's showing that the CLT holds for a normal distribution: with a large # of trials, the mean tends to the expected mean which is 0. </p><br>
+    <script>
+        var average1000 = [];
+        for (var i = 0; i < 1000; i++) {
+            average1000.push(d3.mean(gaussian1000()));
+        }
+        plotHistogram("p3", average1000);
+        d3.select("#p3 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Gaussian Mean Samples");
+    </script>
+
+    <h1>Problem 4</h1>
+    <p id="p4"></p>
+    <script>
+        function lognormal1000() {
+            var lognormal1000 = [];
+            for (var i = 0; i < 1000; i++) {
+                lognormal1000.push(Math.exp(gaussian()));
+            }
+            return lognormal1000;
+        }
+
+        plotHistogram("p4", lognormal1000());
+        d3.select("#p4 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Lognormal Samples");
+    </script>
+
+    <h1>Problem 5</h1>
+    <p id="p5">This histogram's shape is similar to the one from problem 2 (normal density). They're both bell curves. The x-axis goes from roughly 1.45 to 1.9, so the range of values is smaller and all positive. Demonstrates CLT. Compared to problem 4, its underlying
+        distribution, the shape is different. Problem 4's shape is sort of like a skewed curve cut in half. Compared to problem 4, this histogram's x-axis also has a much smaller range. </p>
+    <script>
+        var average1000 = [];
+        for (var i = 0; i < 1000; i++) {
+            average1000.push(d3.mean(lognormal1000()));
+        }
+        plotHistogram("p5", average1000);
+        d3.select("#p5 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Lognormal Mean Samples");
+    </script>
+
+    <h1>Problem 6</h1>
+    <p id="p6"></p>
+    <script>
+        function exponential1000() {
+            var exponential1000 = [];
+            for (var i = 0; i < 1000; i++) {
+                exponential1000.push(-Math.log(Math.random()));
+            }
+            return exponential1000;
+        }
+        plotHistogram("p6", exponential1000());
+        d3.select("#p6 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Exponential Samples");
+    </script>
+
+    <h1>Problem 7</h1>
+    <p id="p7"> The histogram's shape is roughly the same as the one from problem 2. The x-axis is smaller, going from about 0.85 to 1.1, so the range is smaller than problem 2's plot. Compared to problem 6, this histogram has a different shape. Bell curve for problem
+        7 vs. a (maybe skewed?) curve cut in half for problem 6. This histogram's x-axis has a smaller range than problem 6. Compared to the other plots, this plot's shape is like that of all of them except the Cauchy mean. </p>
+    <script>
+        var average1000 = [];
+        for (var i = 0; i < 1000; i++) {
+            average1000.push(d3.mean(exponential1000()));
+        }
+        plotHistogram("p7", average1000);
+        d3.select("#p7 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Exponential Mean Samples");
+    </script>
+
+    <h1>Problem 8</h1>
+    <p id="p8"></p>
+    <script>
+        function sumOf10Exponential() {
+            // sum of 10 exponential RVs or 1 gamma RV w/ a = 10
+            var exponential10 = 0;
+            for (var i = 0; i < 10; i++) {
+                exponential10 += -Math.log(Math.random());
+            }
+            return exponential10;
+        }
+
+        function gamma1000() {
+            var a = 10;
+            var gamma1000 = [];
+            for (var i = 0; i < 1000; i++) {
+                gamma1000.push(sumOf10Exponential());
+            }
+            return gamma1000;
+        }
+        plotHistogram("p8", gamma1000());
+        d3.select("#p8 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Gamma Samples");
+    </script>
+
+    <h1>Problem 9</h1>
+    <p id="p9"> The shape of this histogram is roughly the same as the one from problem 2. The x-axis ranges from about 9.7 to 10.35, so the mean is roughly 10 which is the "a" parameter. The x-axis' range is again smaller than that of problem 2. This histogram has
+        a different shape than that of problem 8. This histogram has a bell curve shape which you can compare to problem 8 (gamma density) which has a skewed curve shape. Compared to the other mean plots, all of their shapes are roughly the same except
+        for the Cauchy mean. </p>
+    <script>
+        var average1000 = [];
+        for (var i = 0; i < 1000; i++) {
+            average1000.push(d3.mean(gamma1000()));
+        }
+        plotHistogram("p9", average1000);
+        d3.select("#p9 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Gamma Mean Samples");
+    </script>
+
+    <h1>Problem 10</h1>
+    <p id="p10"></p>
+    <script>
+        function cauchy1000() {
+            var cauchy1000 = [];
+            for (var i = 0; i < 1000; i++) {
+                cauchy1000.push(gaussian() / gaussian());
+            }
+            return cauchy1000;
+        }
+        plotHistogram("p10", cauchy1000());
+        d3.select("#p10 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Cauchy Samples");
+    </script>
+
+    <h1>Problem 11</h1>
+    <p id="p11">The shape of this plot is really different from that of problem 2 (and literally all the other distributions because it doesn't meet the conditions for CLT). The shape of this plot (1000 Cauchy means) is very similar to that of the plot of 1000 Cauchy
+        samples, its underlying distribution. I guess you could say that the shape is like the discrete version of a really really steep bell curve? Like if you took a normal distribution's bell curve and stretched it out vertically. This plot's x-axis
+        has a huge range from -200 to 1,200 (values will vary). This mean plot and its underlying distribution plot have shapes that don't match any of the other plots (except problem 10). Its x-axis's range is much much wider than that of any of the
+        other graphs (even problem 10, which has an enormous range of values for its x-axis, has a smaller range of values than problem 11). </p>
+    <script>
+        var average1000 = [];
+        for (var i = 0; i < 1000; i++) {
+            average1000.push(d3.mean(cauchy1000()));
+        }
+        plotHistogram("p11", average1000);
+        d3.select("#p11 svg").append("text").attr("x", 250).attr("y", 25).style("text-anchor", "middle").text("1000 Cauchy Mean Samples");
+    </script>
+
+    <h1>Problem 12</h1>
+    <p id="p12"><svg width="500" height="500"></svg></p>
+    <div id="sliders">Hue: <input type="range" id="hue" min="0" max="100"> Opacity: <input type="range" id="opacity" min="0" max="100"></div>
+    <script>
+        // scales
+        var hueScale = d3.scaleLinear().domain([0, 100]).range([0, 360]);
+        var otherScale = d3.scaleLinear().domain([0, 100]).range([0, 1]); // scale for saturation, lightness, and opacity because sliders' values are from 0 to 100
+
+
+        var objectArray = [];
+        // creating 121 objects
+        for (var i = 0; i <= 100; i += 10) {
+            for (var j = 0; j <= 100; j += 10) {
+                objectArray.push({
+                    "saturation": i,
+                    "lightness": j
+                });
+            }
+        }
+        // set up the circles
+        var selection = d3.select("#p12 svg").selectAll("circle").data(objectArray).enter().append("circle")
+            .attr("cx", function(d) {
+                return d.saturation * 4; // so that centers are 40 pixels apart
+            })
+            .attr("cy", function(d) {
+                return d.lightness * 4;
+            })
+            .attr("r", 20)
+            .attr("stroke", "#eee")
+            .attr("transform", "translate(40,40)")
+            .style("fill", function(d) {
+                return d3.hsl(hueScale(50), otherScale(d.saturation), otherScale(d.lightness), otherScale(50));
+            });
+
+        function showCircles(hue, opacity) {
+            // change the circles, so don't need enter()
+            selection = d3.select("#p12 svg").selectAll("circle").data(objectArray)
+                .attr("cx", function(d) {
+                    return d.saturation * 4;
+                })
+                .attr("cy", function(d) {
+                    return d.lightness * 4;
+                })
+                .attr("r", 20)
+                .attr("stroke", "#eee")
+                .attr("transform", "translate(40,40)")
+                .style("fill", function(d) {
+                    return d3.hsl(hueScale(hue), otherScale(d.saturation), otherScale(d.lightness), otherScale(opacity));
+                });
+
+        }
+        // global variables
+        var hue;
+        var opacity;
+        // select sliders
+        var hueSlider = d3.select("#hue");
+        var opacitySlider = d3.select("#opacity");
+        // event listeners for sliders
+        hueSlider.on("input", function() {
+            //make sure to get value of opacity
+            opacity = document.getElementById("opacity").value;
+            // event listener passes in "this.value"
+            showCircles(this.value, opacity);
+        });
+        opacitySlider.on("input", function() {
+            hue = document.getElementById("hue").value;
+            showCircles(hue, this.value);
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>

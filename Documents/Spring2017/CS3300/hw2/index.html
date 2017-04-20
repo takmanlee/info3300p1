@@ -1,0 +1,202 @@
+<html>
+	<head>
+	<title>Takman Michelle Lee (tl428)</title>
+	</head>
+    <body>
+   		<h2>Problem 1</h2>
+   		<p id="p1">
+	     	<svg height="200" width="200" style="border:solid black 1px;">
+				   <filter id="shadow01" x="0" y="0" width="300%" height="300%">
+					   <feOffset result="offOut" in="SourceAlpha" dx="8" dy="10" />
+					   <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1.5" />
+					   <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+					</filter>
+	     		<text x="100" y="100" text-anchor="middle" alignment-baseline="middle" font-family="Palatino" fill="red" font-size="24" filter="url(#shadow01)">Cornell</text>
+	     		<circle cx="100" cy="100" r="3" fill="green"/>
+	     	</svg>
+	    </p>
+
+   		<h2>Problem 2</h2>
+   		<p id="p2">
+	     	<svg height="200" width="200" style="border:solid black 1px;">
+	     		<!--title-->
+	     		<text x="100" y="10" text-anchor="middle" font-size="10">Problem 2</text>
+	     		<!--This uses a 160x160 plot grid-->
+	     		<circle cx="40" cy="174" r="3.5" fill="green"/>
+	     		<circle cx="20" cy="180" r="3.5" fill="green"/>
+	     		<rect x="80" y="152" height="7" width="7" fill="purple"/>
+	     		<rect x="180" y="20" height="7" width="7" fill="purple"/>
+	     		<!-- x axis-->
+	     		<line x1="20" y1="180" x2="190" y2="180" stroke="black"/>
+	     		<!-- y axis-->
+	     		<line x1="20" y1="20" x2="20" y2="180" stroke="black"/>
+	     		<!-- label x-->
+	     		<text text-anchor="middle" font-size="10" transform="translate(10,100) rotate(270)">x-axis</text>
+	     		<!-- label y-->
+	     		<text x="100" y="190" text-anchor="middle" font-size="10">y-axis</text>
+	     	</svg>
+	    </p>
+
+	    <h2>Problem 3</h2>
+	   	<p id="p3">
+
+		   		<svg height="370" width="600" style="border:solid black 1px;">
+		   		<linearGradient id="bg" >
+		            <stop offset="20%"  stop-color="#99ccff"/>
+		            <stop offset="40%" stop-color="#5500ff"/>
+		            <stop offset="60%" stop-color="#7300e6"/>
+		            <stop offset="80%" stop-color="#a64dff"/>
+		            <stop offset="100%" stop-color="#cc99ff"/>
+		        </linearGradient>
+		        <linearGradient id="wd" >
+		        	<stop offset="33%"  stop-color="#ffff00"/>
+		            <stop offset="66%"  stop-color="gold"/>
+		            <stop offset="100%" stop-color="white"/>
+		        </linearGradient>
+		        <linearGradient id="flag" >
+		        	<stop offset="13%"  stop-color="#999966"/>
+		            <stop offset="56%"  stop-color="#d6d6c2"/>
+		            <stop offset="100%" stop-color="#999966"/>
+		        </linearGradient>
+		         <pattern id="star" width="50" height="50" patternUnits="userSpaceOnUse"  patternTransform="scale(2)">
+		         	<rect x="0" y="0" width="100" height="100" fill="black"/>
+					<g id="curve-horizontal">
+					<path d="M10 10 C 15 15, 25 15, 30 10" fill="url(#flag)" />
+					<path d="M10 10 C 15 5, 25 5, 30 10" fill="url(#flag)"/>
+					</g>
+					<g id="curve-vertical">
+					<path d="M25 10 C 20 7 , 20 3, 25 0" fill="url(#flag)" />
+					<path d="M25 10 C 30 7, 30 3, 25 0" fill="url(#flag)"/>
+					</g>
+
+					<use x="10" y="0" xlink:href="#curve-horizontal" />
+					<use x="0" y="10" xlink:href="#curve-vertical" />
+					
+		        </pattern>
+		   		<rect height="400" width="600" fill="url(#star)"/>
+
+		   		<rect height="400" width="600" fill="url(#star)"/>
+
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z"  transform="translate(100,20) rotate(30) scale(0.4)" />
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z" transform="translate(50,120) rotate(30) scale(0.4)" "/>
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z" transform="translate(100,240) rotate(30) scale(0.4)" "/>
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z" transform="translate(550,120) rotate(30) scale(0.4)" "/>
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z"  transform="translate(500,20) rotate(70) scale(0.4)" />
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z"  transform="translate(500,240) rotate(60) scale(0.4)" />
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z"  transform="translate(310,0) rotate(60) scale(0.4)" />
+				<path fill="url(#bg)" stroke="white" d="M50 0 L 27 96 L 91 19 L 1 59 L 100 59 L 10 19 L 74 96 L 50 0 Z"  transform="translate(310,300) rotate(60) scale(0.4)" />
+				<text fill="url(#wd)" x="300" y="90" text-anchor="middle" font-size="30" font-family="cursive">CS/INFO 3300</text>
+				<text fill="url(#wd)" x="300" y="180" text-anchor="middle" font-size="30" font-family="cursive">Data Driven Web</text>
+				<text fill="url(#wd)" x="300" y="280" text-anchor="middle" font-size="30" font-family="cursive">~ESSE ET VIDERI~</text>
+			</svg>
+		</p>
+
+		<h2>Problem 4</h2>
+				<!-- y axis-->
+		<p id="p4a">
+			<svg height="350" width="700" style="border:solid black 1px;">
+				<!-- y axis-->
+	     		<line x1="45" y1="45" x2="45" y2="265" stroke="black"/>
+	     		<!-- x axis-->
+	     		<line x1="40" y1="265" x2="685" y2="265" stroke="black"/>
+	     		<!--y-ticks-->
+	     		<line x1="40" y1="265" x2="45" y2="265" stroke="black"/>
+	     		<line x1="40" y1="225" x2="45" y2="225" stroke="black"/>
+	     		<line x1="40" y1="185" x2="45" y2="185" stroke="black"/>
+	     		<line x1="40" y1="145" x2="45" y2="145" stroke="black"/>
+	     		<line x1="40" y1="105" x2="45" y2="105" stroke="black"/>
+	     		<line x1="40" y1="65" x2="45" y2="65" stroke="black"/>
+	     		<!--x axis label -->
+				<text x="30" y="270" text-anchor="middle">0</text>
+				<text x="30" y="230" text-anchor="middle">1</text>
+				<text x="30" y="190" text-anchor="middle">2</text>
+				<text x="30" y="150" text-anchor="middle">3</text>
+				<text x="30" y="110" text-anchor="middle">4</text>
+				<text x="30" y="70" text-anchor="middle">5</text>
+				<!--y-ticks-->
+				<line x1="45" y1="270" x2="45" y2="265" stroke="black"/>
+				<line x1="85" y1="270" x2="85" y2="265" stroke="black"/>
+				<line x1="125" y1="270" x2="125" y2="265" stroke="black"/>
+				<line x1="165" y1="270" x2="165" y2="265" stroke="black"/>
+				<line x1="205" y1="270" x2="205" y2="265" stroke="black"/>
+				<line x1="245" y1="270" x2="245" y2="265" stroke="black"/>
+				<line x1="285" y1="270" x2="285" y2="265" stroke="black"/>
+				<line x1="325" y1="270" x2="325" y2="265" stroke="black"/>
+				<line x1="365" y1="270" x2="365" y2="265" stroke="black"/>
+				<line x1="405" y1="270" x2="405" y2="265" stroke="black"/>
+				<line x1="445" y1="270" x2="445" y2="265" stroke="black"/>
+				<line x1="485" y1="270" x2="485" y2="265" stroke="black"/>
+				<line x1="525" y1="270" x2="525" y2="265" stroke="black"/>
+				<line x1="565" y1="270" x2="565" y2="265" stroke="black"/>
+				<line x1="605" y1="270" x2="605" y2="265" stroke="black"/>
+				<line x1="645" y1="270" x2="645" y2="265" stroke="black"/>
+				<!--y label-->
+				<text x="45" y="285" text-anchor="middle">0</text>
+				<text x="85" y="285" text-anchor="middle">1</text>
+				<text x="125" y="285" text-anchor="middle">2</text>
+				<text x="165" y="285" text-anchor="middle">3</text>
+				<text x="205" y="285" text-anchor="middle">4</text>
+				<text x="245" y="285" text-anchor="middle">5</text>
+				<text x="285" y="285" text-anchor="middle">6</text>
+				<text x="325" y="285" text-anchor="middle">7</text>
+				<text x="365" y="285" text-anchor="middle">8</text>
+				<text x="405" y="285" text-anchor="middle">9</text>
+				<text x="445" y="285" text-anchor="middle">10</text>
+				<text x="485" y="285" text-anchor="middle">11</text>
+				<text x="525" y="285" text-anchor="middle">12</text>
+				<text x="565" y="285" text-anchor="middle">13</text>
+				<text x="605" y="285" text-anchor="middle">14</text>
+				<text x="645" y="285" text-anchor="middle">15</text>
+				<!--bar-->
+				<rect id="15" stroke="black" fill="#D3D3D3" opactiy="0.9" width="40" height="80" x="625" y="185" />
+				<rect id="14" stroke="black" fill="#D3D3D3" width="40" height="0" x="585" y="265" />
+				<rect id="13" stroke="black" fill="#D3D3D3" width="40" height="0" x="545" y="265" />
+				<rect id="12" stroke="black" fill="#D3D3D3" width="40" height="0" x="505" y="265" />
+				<rect id="11" stroke="black" fill="#D3D3D3" width="40" height="40" x="465" y="225" />
+				<rect id="10" stroke="black" fill="#D3D3D3" width="40" height="0" x="425" y="265" />
+				<rect id="9" stroke="black" fill="#D3D3D3" width="40" height="0" x="385" y="265" />
+				<rect id="8" stroke="black" fill="#D3D3D3" width="40" height="0" x="345" y="265" />
+				<rect id="7" stroke="black" fill="#D3D3D3" width="40" height="200" x="305" y="65" />
+				<rect id="6" stroke="black" fill="#D3D3D3" width="40" height="80" x="265" y="185" />
+				<rect id="5" stroke="black" fill="#D3D3D3" width="40" height="80" x="225" y="185" />
+				<rect id="4" stroke="black" fill="#D3D3D3" width="40" height="120" x="185" y="145" />
+				<rect id="3" stroke="black" fill="#D3D3D3" width="40" height="40" x="145" y="225" />
+				<rect id="2" stroke="black" fill="#D3D3D3" width="40" height="40" x="105" y="225" />
+				<rect id="1" stroke="black" fill="#D3D3D3" width="40" height="0" x="65" y="265" />
+
+				<!--4d-->
+				<rect id="stdDev" stroke="none" fill="#b3ffff" fill-opacity="0.5" width="268.68048" height="225" x="176.24776" y="40" />
+
+				<!--4c-->
+	     		<line x1="310.588" y1="40" x2="310.588" y2="265" stroke="red"/>
+	     		<line x1="285" y1="40" x2="285" y2="265" stroke="blue"/>
+	     		<line x1="325" y1="40" x2="325" y2="265" stroke="purple"/>
+
+	     		<!--title-->
+	     		<text x="350" y="20" text-anchor="middle" font-size="20">Problem 4</text>
+
+	     		<!-- label x-->
+	     		<text text-anchor="middle" font-size="20" transform="translate(15,170) rotate(270)">value</text>
+	     		<!-- label y-->
+	     		<text x="350" y="325" text-anchor="middle" font-size="20">frequency</text>
+
+			</svg>
+		</p>
+
+		<p id="p4d">
+			<b>4D</b><br>
+			Mean: 6.764706<br>
+			Median: 6<br>
+			Mode: 7<br>
+			Standard Deviation: 3.717012
+		</p>
+
+
+		<p id="p4e">
+			<b>4E</b><br>Probability that a randomly selected datapoint equals 4:<br>0.1764705
+		</p>
+
+
+
+   </body>
+</html>

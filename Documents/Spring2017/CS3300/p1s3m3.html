@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title> Map 3 Exploration</title>
+		<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+	</head>
+	<body>
+		<script>
+			function parseLine (line) {
+				line.Date = new Date(line.Date);
+				line.Employment = Number(line.Employment);
+				
+				return line;
+			}
+						
+			d3.csv("data.csv",parseline, function(error, data){
+				rawData = data;
+
+			});
+		</script>
+	</body>
+</html>

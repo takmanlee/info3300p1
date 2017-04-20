@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Takman Michelle Lee - tl428</title>
+<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v2.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<style>
+body { font-family: 'Alegreya Sans', Calibri, sans-serif; }
+svg { border: solid #ccc 1px; }
+path.country { fill: #ccc; stroke: #888; }
+</style>
+</head>
+<body>
+<p>
+<h2>Problem 2</h2>
+<svg id="p2" height = "600" width="800"></svg>
+<p>
+<h2>Problem 3</h2>
+<svg id="p3" height = "600" width="800"></svg><br>
+The reason why we need a log scale is because the discrepency between the highest population density and the lowest population density is huge. The color scale generated thus does not show clearly the differences in population density among the ones with relatively low state density. Using the log scale, we can more easily differentiates the states with higher population density to lower population density. We can also see the difference in state density among the smaller states.
+<p>
+<h2>Problem 4</h2>
+<svg id="p4" height = "600" width="850"></svg>
+<br><h2>Problem 4c</h2>The log density is a good predictor. The smaller the population density is, the higher gun ownership. However, it is less accurate for  outliners. For example, Hawaii is way below the regression line. Referring to the maps, we see that it has a very low gun ownership rate but a moderately high population density. The two values in Hawaii does not reflect the lower population density gives higher gun ownership rate. This makes the point to appear far below the trend.  
+
+<br><h2>Problem 4d</h2>They are not the same. This is because on the same axis, mathematically, the formula of the blue line is y=mx+b and the formula of the red line is x=my+b. A situation in which the lines will be the same is when the correlation is -1 or 1, that is x is a perfect predictor of y and vice versa. 
+<br><h2>Problem 4e</h2><p id="p4e"></p>
+
+<script id="notes">
+
+var projection = d3.geoAlbersUsa().scale(75);
+var pathGenerator = d3.geoPath().projection(projection);
+
+var colors = [d3.hsl(336,1,.95), d3.hsl(336,1,.85),d3.hsl(336,1,.75),d3.hsl(336,1,.65),d3.hsl(336,1,.55),d3.hsl(336,1,.45),d3.hsl(336,1,.35),d3.hsl(336,1,.25),d3.hsl(336,1,.15),d3.hsl(336,1,.05)];
+
+var states;
+var usdaAtlas;
+var scaleDomain;
+var domainRange;
+var minP2;
+var maxP2;
+var minP3;
+var maxP3;
+var p4set = [];
+var p4set2 = [];
+
+// function to handle any row-by-row processing on CSV
+var parseRow = function(row) {
+	row.FIPS = Number(row.FIPS);
+	return row;
+}
+
+var p2 = d3.select("#p2");
+var p3 = d3.select("#p3");
+var p4 = d3.select("#p4");
+
+
+d3.queue()
+.defer(d3.json, "us.json")
+.defer(d3.csv, "gunownership.txt", parseRow)
+.await(function (error, rawMap, rawAtlas) {
+	
+	states = topojson.feature(rawMap, rawMap.objects.states);
+	
+	usdaAtlas = d3.map(rawAtlas, function (d) {
+		return d.FIPS;
+	});
+
+	scaleDomain = usdaAtlas.values();
+	maxP2 = d3.max(scaleDomain, function(d){return +d.Ownership;});
+	minP2 = d3.min(scaleDomain, function(d){return +d.Ownership;});
+	maxP3 = d3.max(scaleDomain, function(d){return +d.Density;});
+	minP3 = d3.min(scaleDomain, function(d){return +d.Density;});
+
+	percentScaleP2 = d3.scaleQuantize()
+	.domain([minP2,maxP2]).range(colors);
+	percentScaleP3 = d3.scaleQuantize()
+	.domain([Math.log(minP3),Math.log(maxP3)]).range(colors.reverse());
+
+	showMap(percentScaleP2,"Ownership", p2);
+	showMap(percentScaleP3,"Density", p3);
+	regression();
+
+});
+
+function showMap (scale,variable, part) {
+	// Create or modify paths for each country
+	var holder = part;
+
+	projection.fitExtent([[0,0], [holder.attr("width"), holder.attr("height")]], states);
+	pathGenerator = d3.geoPath().projection(projection);
+	
+	var paths = holder.selectAll("path.country").data(states.features);
+	paths.enter().append("path").attr("class", "country")
+	.merge(paths)
+	.transition().duration(1000)
+	.style("fill", function (state) {
+		var stateData = usdaAtlas.get(state.id);
+		if (stateData) {
+			if(variable == "Density"){
+				return scale(Math.log(stateData[variable]));
+			} else{
+			return scale(stateData[variable]);
+			}
+		}
+		
+	})
+	.attr("d", function (state) {
+		return pathGenerator(state);
+	});
+	
+}
+
+function regression(){
+	var p4Xscale = d3.scaleLinear()
+	.domain([0,Math.log(maxP3)])
+	.range([70, 720]);
+	
+	var p4Yscale = d3.scaleLinear()
+	.domain([0,maxP2])
+	.range([530, 70]);
+
+	var p4dYscale = d3.scaleLinear()
+	.domain([0,maxP2])
+	.range([530, 70]);
+	
+	var p4dXscale = d3.scaleLinear()
+	.domain([0,Math.log(maxP3)])
+	.range([70, 720]);
+
+
+	var xAxis = d3.axisBottom(p4Xscale);
+	p4.append("g").attr("transform", "translate(0, 530)").call(xAxis);
+	p4.append("text").attr("x",425).attr("y",580).style("text-anchor", "middle").text("Log of Population Density");
+
+	var yAxis = d3.axisLeft(p4Yscale);
+	p4.append("g").attr("transform", "translate(70, 0)").call(yAxis);
+	p4.append("text").attr("transform","rotate(-90)").attr("y",35).attr("x",-300).style("text-anchor", "middle").text("Ownership");
+
+	scaleDomain.forEach(function (d) {
+		p4.append("circle")
+		.attr("cx", p4Xscale(Math.log(d.Density)))
+		.attr("cy", p4Yscale(d.Ownership))
+		.attr("r", 5)
+		.style("opacity", 0.4)
+		.style("fill", "green");
+
+		p4.append("text")
+		.attr("x",p4Xscale(Math.log(d.Density)))
+		.attr("y", p4Yscale(d.Ownership))
+		.style("text-anchor", "middle")
+		.text(d.State);
+
+		p4set.push({x: Math.log(d.Density), y: d.Ownership});
+		p4set2.push({y: Math.log(d.Density), x: d.Ownership});
+
+	});
+
+	var model = leastSquares(p4set);
+	var model2 = leastSquares(p4set2);
+	var model4e = correlation(p4set);
+
+	var regressionLine = p4.append("line")
+	.attr("class", "estimated")
+	.attr("x1", p4Xscale(0))
+	.attr("x2", p4Xscale(Math.log(maxP3)))
+	.attr("y1", p4Yscale(model.slope * 0 + model.intercept))
+	.attr("y2", p4Yscale(model.slope * Math.log(maxP3)+ model.intercept))
+	.style("stroke", "blue");
+
+	var regressionLine2 = p4.append("line")
+	.attr("class", "estimated")
+	.attr("y1", p4dYscale(0))
+	.attr("y2", p4dYscale(maxP2))
+	.attr("x1", p4dXscale(model2.slope * 0 + model2.intercept))
+	.attr("x2", p4dXscale(model2.slope * maxP2 + model2.intercept))
+	.style("stroke", "red");
+
+	console.log(model2.slope);
+	console.log(model2.intercept);
+
+	document.getElementById("p4e").innerHTML = "The pearson correlation is "+ model4e+". This correlation value relate to the slopes of the two regression models since it indicates a negative linear correlation, which is represented by the negative slope of the two regression lines. In addition, the correlation is -0.821, which is a pretty strong correlation. This is also reflected from how data points are close to the two regression lines" ;
+ }
+
+function leastSquares(points) {
+	var model = { intercept: 0, slope: 0 };
+
+	if (points.length == 0) { return model; }
+
+	var meanX = d3.mean(points, function (d) { 
+		return d.x;
+	});
+
+	var meanY = d3.mean(points, function (d) { 
+		return d.y;
+	});
+
+	// Fill in the slope calculation
+	model.slope = d3.sum(points, function (d) {
+		return (d.x - meanX) * (d.y - meanY);
+	});
+	model.slope /= d3.sum(points, function (d) {
+		return (d.x - meanX) * (d.x - meanX);
+	});
+
+	model.intercept = meanY - model.slope * meanX;
+	return model;
+}
+
+function correlation(points) {
+	var model = {cor: 0 };
+
+	if (points.length == 0) { return model; }
+
+	var meanX = d3.mean(points, function (d) { 
+		return d.x;
+	});
+
+	var meanY = d3.mean(points, function (d) { 
+		return d.y;
+	});
+
+	var stdX = d3.deviation(points, function(d){
+		return d.x;
+	});
+
+	var stdY = d3.deviation(points, function(d){
+		return d.y;
+	});
+
+	var num = d3.sum(points, function (d) {
+		return ((d.x - meanX) * (d.y - meanY));
+	});
+
+	var pt = d3.sum(points, function (d) {
+		return 1;
+	});
+
+	var cov = num / (pt-1);
+
+	model.cor = cov / (stdX * stdY);
+
+	return model.cor;
+}
+
+</script>
+
+</body>
+</html>

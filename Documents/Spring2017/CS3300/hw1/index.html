@@ -1,0 +1,135 @@
+<html>
+   <body>
+   		<script>
+   		//helper function
+	   	function sample (dice, length){
+	       	var value = Math.floor(Math.random() * length);
+           	return dice[value];
+        } 
+        //helper
+        function results(func){
+        	var a = [];
+        	for(i=0; i<10; i++){
+	        	a.push(func());
+	      	};
+	       	return a;
+        }
+
+   		</script>
+
+   		<h2>Problem 1</h2>
+   		<p id="p1">
+	      <script>
+	      //function that returns a random value from [1, 2, 3, 4, 5, 6], with uniform probability
+	        function roll() {
+	        	var max = 6;
+	        	var min = 1;
+	            return Math.floor(Math.random() * max) + min;
+	        }
+	        document.getElementById("p1").innerHTML = results(roll).join(" ");
+	      </script>
+	    </p>
+
+	    <h2>Problem 2</h2>
+	    <p id="p2">
+	    	<script>
+	    	//functino that takes one argument and returns  a function
+	    	function diceFactory(values) {    		
+	            var max = values.length;
+	            return sample(values,max);
+	        }
+	        function rgb(){
+	        	return diceFactory(["red","blue","green"]);
+	        };
+	        document.getElementById("p2").innerHTML = results(rgb).join(" ");
+	    	</script>
+	   	</p> 
+
+	   	<h2>Problem 3</h2>
+	   	<p id="p3"> 
+	   		<script>
+	   			//Initialize the dies
+	   			var e0 = [1,1,1,5,5,5];
+	   			var e1 = [0,0,4,4,4,4];
+	   			var e2 = [3,3,3,3,3,3];
+	   			var e3 = [2,2,2,2,6,6];
+	   			var eDice = [e0,e1,e2,e3];
+	   			
+	   			//function returns a function that stimulates the die
+	   			function nonTransitiveFactory(number){
+	   				var chosenE = eDice[number];
+	   				var maxE = chosenE.length;
+	   				return sample(chosenE,maxE);
+	   			}
+	   			//dice rolling function
+	   			function oneFive(){
+	   				return nonTransitiveFactory(0);
+	   			}
+	        	document.getElementById("p3").innerHTML = results(oneFive).join(" ");
+	   		</script>
+	   	</p>
+
+	   	<h2>Problem 4</h2>
+	   	<p id="p4">
+	   		<script>
+	   			var diceNum = 0;
+	   			var diceNumCompare = 1; 
+	   			var size = 100;
+	   			function rollNTimes(func1,func2,n){
+	   				var greater = 0;
+	   				for(j=0; j<n; j++){
+	   					if(func1(diceNum) > func2(diceNumCompare)){
+	   						greater++;
+	   					} ;
+	   				}
+	   				return greater;
+	   			}
+	   			function roll100(){
+	   				return rollNTimes(nonTransitiveFactory,nonTransitiveFactory,size);
+	   			}
+	   			document.getElementById("p4").innerHTML = results(roll100).join(" ");
+	   		</script>
+	   	</p> 
+
+	   	<h2>Problem 5</h2>
+		<script>
+		function tableCreate(){
+		    var body = document.body;
+		    tbl  = document.createElement('table');
+		    tbl.style.width = '100%';
+    		tbl.setAttribute('border', '1');
+		    for(var r = 0; r < 4; r++){
+		        if(r == 0){
+			       	var tr = tbl.insertRow();
+			        for(label=0;label<5;label++){
+			        	var td = tr.insertCell();
+			        	if(label!=0){
+		        			td.innerHTML = "E" + (label-1);
+		        			td.setAttribute('align','center')
+		        		}
+			        }
+			    }
+			    diceNum = r;
+		        var tr = tbl.insertRow();
+		        size = 1000;
+		        for(var c = 0; c < 4; c++){
+		        	if(c==0){
+		        		var td = tr.insertCell();
+		        		td.innerHTML = "E" + r;
+		        	}
+		        	diceNumCompare = c;
+		            var td = tr.insertCell();
+		            var value = rollNTimes(nonTransitiveFactory,nonTransitiveFactory,size);
+		            td.innerHTML = value;
+		            td.setAttribute('align','center');
+		        }
+		    }
+
+		    body.appendChild(tbl);
+		}
+		tableCreate();
+
+	   	</script>
+      	<p id="p5">From the table produced in p5, we see that E0 beats E1, E1 beats E2, E2 beats E3, E3 beats E0 all with a 2/3 probability. There is no dominant strategy in a sense. It forms a chain of relation, and thus thus it has the name non-transitive dice. In other words, the transitive property implies that if A is better than B, and B is better than C, then A has to be greater than C. But from the above observation, it is not the case, so it is intransitive. </p>
+   </body>
+</html>
